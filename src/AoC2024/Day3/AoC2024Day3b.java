@@ -1,0 +1,58 @@
+package AoC2024.Day3;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.Queue;
+import java.util.LinkedList;
+
+public class AoC2024Day3b {
+    public static void main(String[] args) {
+        try{
+            File file = new File("src/AoC2024/Day3/input.txt");
+            Scanner scanner = new Scanner(file);
+            String line;
+            Queue<String> queue = new LinkedList<String>();
+            while(scanner.hasNextLine()) {
+                line = scanner.nextLine();
+                Pattern p = Pattern.compile("mul\\([0-9]{1,3},[0-9]{1,3}\\)|do\\(\\)|don't\\(\\)");
+                Matcher matcher = p.matcher(line);
+                while(matcher.find()){
+                    queue.add(matcher.group());
+                }
+            }
+            boolean stop = false;
+            int answer = 0;
+            while(!queue.isEmpty()){
+                String temp = queue.poll();
+                if(temp.equals("do()")){
+                    stop = false;
+                    System.out.println(temp + " ");
+                }
+                if(temp.equals("don't()")){
+                    stop = true;
+                    System.out.println(temp + " ");
+                }
+                if(temp.contains("mul")&&!stop){
+                    System.out.println(temp + " ");
+                    answer += evauluate(temp);
+                }
+            }
+            System.out.println("Answer: " + answer);
+            scanner.close();
+        }catch(FileNotFoundException e){
+            System.out.println("Error: File not found" + e.getMessage());
+        }
+
+    }
+
+    static int evauluate(String exp){
+        exp = exp.substring(4, exp.length() - 1);
+        String[] nums = exp.split(",");
+        int answer = Integer.parseInt(nums[0]) * Integer.parseInt(nums[1]);
+        System.out.println(nums[0] + "*" + nums[1] + "=" + answer);
+        return answer;
+    }
+}
